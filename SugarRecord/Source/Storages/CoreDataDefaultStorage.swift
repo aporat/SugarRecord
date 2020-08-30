@@ -26,15 +26,11 @@ public class CoreDataDefaultStorage: Storage {
         if let context = self._saveContext {
             return context
         }
-        let _context = cdContext(withParent: .context(self.rootSavingContext), concurrencyType: .privateQueueConcurrencyType, inMemory: false)
+        let _context = cdContext(withParent: .context(self.rootSavingContext), concurrencyType: .privateQueueConcurrencyType)
         _context.observe(inMainThread: true) { [weak self] (notification) -> Void in
             (self?.mainContext as? NSManagedObjectContext)?.mergeChanges(fromContextDidSave: notification as Notification)
         }
         self._saveContext = _context
-        return _context
-    }
-    public var memoryContext: Context! {
-        let _context =  cdContext(withParent: .context(self.rootSavingContext), concurrencyType: .privateQueueConcurrencyType, inMemory: true)
         return _context
     }
     
@@ -114,8 +110,8 @@ public class CoreDataDefaultStorage: Storage {
         self.objectModel = model.model()!
         self.persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: objectModel)
         self.persistentStore = try cdInitializeStore(store: store, storeCoordinator: persistentStoreCoordinator, migrate: migrate)
-        self.rootSavingContext = cdContext(withParent: .coordinator(self.persistentStoreCoordinator), concurrencyType: .privateQueueConcurrencyType, inMemory: false)
-        self.mainContext = cdContext(withParent: .context(self.rootSavingContext), concurrencyType: .mainQueueConcurrencyType, inMemory: false)
+        self.rootSavingContext = cdContext(withParent: .coordinator(self.persistentStoreCoordinator), concurrencyType: .privateQueueConcurrencyType)
+        self.mainContext = cdContext(withParent: .context(self.rootSavingContext), concurrencyType: .mainQueueConcurrencyType)
     }
     
 }
@@ -123,15 +119,12 @@ public class CoreDataDefaultStorage: Storage {
 
 // MARK: - Internal
 
-internal func cdContext(withParent parent: CoreDataContextParent?, concurrencyType: NSManagedObjectContextConcurrencyType, inMemory: Bool) -> NSManagedObjectContext {
+internal func cdContext(withParent parent: CoreDataContextParent?, concurrencyType: NSManagedObjectContextConcurrencyType) -> NSManagedObjectContext {
     var context: NSManagedObjectContext?
-    if inMemory {
-        context = NSManagedObjectMemoryContext(concurrencyType: concurrencyType)
-    }
-    else {
-        context = NSManagedObjectContext(concurrencyType: concurrencyType)
-    }
-    if let parent = parent {
+
+    context = NSManagedObjectContext(concurrencyType: concurrencyType)
+    
+  if let parent = parent {
         switch parent {
         case .context(let parentContext):
             context!.parent = parentContext
