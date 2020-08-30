@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5342D54324FB2A2E00D16764 /* DirUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52724FB2A2E00D16764 /* DirUtils.swift */; };
-		5342D54424FB2A2E00D16764 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52924FB2A2E00D16764 /* StorageError.swift */; };
 		5342D54524FB2A2E00D16764 /* Requestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52B24FB2A2E00D16764 /* Requestable.swift */; };
 		5342D54624FB2A2E00D16764 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52C24FB2A2E00D16764 /* Entity.swift */; };
 		5342D54724FB2A2E00D16764 /* NSSortDescriptorConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52D24FB2A2E00D16764 /* NSSortDescriptorConvertible.swift */; };
@@ -18,11 +17,12 @@
 		5342D54D24FB2A2E00D16764 /* CoreDataDefaultStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53624FB2A2E00D16764 /* CoreDataDefaultStorage.swift */; };
 		5342D54F24FB2A2E00D16764 /* NSManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53924FB2A2E00D16764 /* NSManagedObject.swift */; };
 		5342D55024FB2A2E00D16764 /* NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53A24FB2A2E00D16764 /* NSManagedObjectContext.swift */; };
-		5342D55124FB2A2E00D16764 /* CoreDataError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53C24FB2A2E00D16764 /* CoreDataError.swift */; };
 		5342D55224FB2A2E00D16764 /* CoreDataOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53E24FB2A2E00D16764 /* CoreDataOptions.swift */; };
 		5342D55324FB2A2E00D16764 /* CoreDataObjectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53F24FB2A2E00D16764 /* CoreDataObjectModel.swift */; };
 		5342D55424FB2A2E00D16764 /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D54024FB2A2E00D16764 /* CoreDataStore.swift */; };
 		5342D55524FB2A2E00D16764 /* CoreDataContextParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D54124FB2A2E00D16764 /* CoreDataContextParent.swift */; };
+		5342D55C24FB2F7400D16764 /* CoreDataError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D55A24FB2F7400D16764 /* CoreDataError.swift */; };
+		5342D55D24FB2F7400D16764 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D55B24FB2F7400D16764 /* StorageError.swift */; };
 		537EDD0E24F49F1E003DC54A /* SugarRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EDD0424F49F1E003DC54A /* SugarRecord.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,7 +38,6 @@
 
 /* Begin PBXFileReference section */
 		5342D52724FB2A2E00D16764 /* DirUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirUtils.swift; sourceTree = "<group>"; };
-		5342D52924FB2A2E00D16764 /* StorageError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		5342D52B24FB2A2E00D16764 /* Requestable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Requestable.swift; sourceTree = "<group>"; };
 		5342D52C24FB2A2E00D16764 /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		5342D52D24FB2A2E00D16764 /* NSSortDescriptorConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSSortDescriptorConvertible.swift; sourceTree = "<group>"; };
@@ -48,12 +47,13 @@
 		5342D53624FB2A2E00D16764 /* CoreDataDefaultStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataDefaultStorage.swift; sourceTree = "<group>"; };
 		5342D53924FB2A2E00D16764 /* NSManagedObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSManagedObject.swift; sourceTree = "<group>"; };
 		5342D53A24FB2A2E00D16764 /* NSManagedObjectContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSManagedObjectContext.swift; sourceTree = "<group>"; };
-		5342D53C24FB2A2E00D16764 /* CoreDataError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataError.swift; sourceTree = "<group>"; };
 		5342D53E24FB2A2E00D16764 /* CoreDataOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataOptions.swift; sourceTree = "<group>"; };
 		5342D53F24FB2A2E00D16764 /* CoreDataObjectModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataObjectModel.swift; sourceTree = "<group>"; };
 		5342D54024FB2A2E00D16764 /* CoreDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStore.swift; sourceTree = "<group>"; };
 		5342D54124FB2A2E00D16764 /* CoreDataContextParent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataContextParent.swift; sourceTree = "<group>"; };
 		5342D54224FB2A2E00D16764 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5342D55A24FB2F7400D16764 /* CoreDataError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataError.swift; sourceTree = "<group>"; };
+		5342D55B24FB2F7400D16764 /* StorageError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		537EDD0424F49F1E003DC54A /* SugarRecord.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SugarRecord.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EDD0D24F49F1E003DC54A /* SugarRecordTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SugarRecordTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CEFC65EA4F1FBEAFA9274D5 /* Pods_KKProgressToolbar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KKProgressToolbar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,7 +89,7 @@
 		5342D52324FB2A2E00D16764 /* SugarRecord */ = {
 			isa = PBXGroup;
 			children = (
-				5342D55824FB2ED400D16764 /* Errors */,
+				5342D55924FB2F6800D16764 /* Errors */,
 				5342D55724FB2EA800D16764 /* Entities */,
 				5342D52724FB2A2E00D16764 /* DirUtils.swift */,
 				5342D52B24FB2A2E00D16764 /* Requestable.swift */,
@@ -117,13 +117,13 @@
 			name = Entities;
 			sourceTree = "<group>";
 		};
-		5342D55824FB2ED400D16764 /* Errors */ = {
+		5342D55924FB2F6800D16764 /* Errors */ = {
 			isa = PBXGroup;
 			children = (
-				5342D52924FB2A2E00D16764 /* StorageError.swift */,
-				5342D53C24FB2A2E00D16764 /* CoreDataError.swift */,
+				5342D55A24FB2F7400D16764 /* CoreDataError.swift */,
+				5342D55B24FB2F7400D16764 /* StorageError.swift */,
 			);
-			path = Errors;
+			name = Errors;
 			sourceTree = "<group>";
 		};
 		537EDCFA24F49F1E003DC54A = {
@@ -255,10 +255,9 @@
 			files = (
 				5342D55424FB2A2E00D16764 /* CoreDataStore.swift in Sources */,
 				5342D54624FB2A2E00D16764 /* Entity.swift in Sources */,
+				5342D55C24FB2F7400D16764 /* CoreDataError.swift in Sources */,
 				5342D55324FB2A2E00D16764 /* CoreDataObjectModel.swift in Sources */,
-				5342D55124FB2A2E00D16764 /* CoreDataError.swift in Sources */,
 				5342D54524FB2A2E00D16764 /* Requestable.swift in Sources */,
-				5342D54424FB2A2E00D16764 /* StorageError.swift in Sources */,
 				5342D54824FB2A2E00D16764 /* Context.swift in Sources */,
 				5342D54A24FB2A2E00D16764 /* Storage.swift in Sources */,
 				5342D54C24FB2A2E00D16764 /* Request.swift in Sources */,
@@ -266,6 +265,7 @@
 				5342D54F24FB2A2E00D16764 /* NSManagedObject.swift in Sources */,
 				5342D54D24FB2A2E00D16764 /* CoreDataDefaultStorage.swift in Sources */,
 				5342D54724FB2A2E00D16764 /* NSSortDescriptorConvertible.swift in Sources */,
+				5342D55D24FB2F7400D16764 /* StorageError.swift in Sources */,
 				5342D54324FB2A2E00D16764 /* DirUtils.swift in Sources */,
 				5342D55024FB2A2E00D16764 /* NSManagedObjectContext.swift in Sources */,
 				5342D55224FB2A2E00D16764 /* CoreDataOptions.swift in Sources */,
