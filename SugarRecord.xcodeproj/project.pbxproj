@@ -15,7 +15,6 @@
 		5342D54824FB2A2E00D16764 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52E24FB2A2E00D16764 /* Context.swift */; };
 		5342D54924FB2A2E00D16764 /* NSPredicateConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D52F24FB2A2E00D16764 /* NSPredicateConvertible.swift */; };
 		5342D54A24FB2A2E00D16764 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53124FB2A2E00D16764 /* Storage.swift */; };
-		5342D54B24FB2A2E00D16764 /* RequestObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53224FB2A2E00D16764 /* RequestObservable.swift */; };
 		5342D54C24FB2A2E00D16764 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53324FB2A2E00D16764 /* Request.swift */; };
 		5342D54D24FB2A2E00D16764 /* CoreDataDefaultStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53624FB2A2E00D16764 /* CoreDataDefaultStorage.swift */; };
 		5342D54F24FB2A2E00D16764 /* NSManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D53924FB2A2E00D16764 /* NSManagedObject.swift */; };
@@ -47,7 +46,6 @@
 		5342D52E24FB2A2E00D16764 /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		5342D52F24FB2A2E00D16764 /* NSPredicateConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSPredicateConvertible.swift; sourceTree = "<group>"; };
 		5342D53124FB2A2E00D16764 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
-		5342D53224FB2A2E00D16764 /* RequestObservable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestObservable.swift; sourceTree = "<group>"; };
 		5342D53324FB2A2E00D16764 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		5342D53624FB2A2E00D16764 /* CoreDataDefaultStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataDefaultStorage.swift; sourceTree = "<group>"; };
 		5342D53924FB2A2E00D16764 /* NSManagedObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSManagedObject.swift; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 			isa = PBXGroup;
 			children = (
 				5342D53124FB2A2E00D16764 /* Storage.swift */,
-				5342D53224FB2A2E00D16764 /* RequestObservable.swift */,
 				5342D53324FB2A2E00D16764 /* Request.swift */,
 			);
 			name = Entities;
@@ -323,7 +320,6 @@
 				5342D55124FB2A2E00D16764 /* CoreDataError.swift in Sources */,
 				5342D54524FB2A2E00D16764 /* Requestable.swift in Sources */,
 				5342D54424FB2A2E00D16764 /* StorageError.swift in Sources */,
-				5342D54B24FB2A2E00D16764 /* RequestObservable.swift in Sources */,
 				5342D54924FB2A2E00D16764 /* NSPredicateConvertible.swift in Sources */,
 				5342D54824FB2A2E00D16764 /* Context.swift in Sources */,
 				5342D54A24FB2A2E00D16764 /* Storage.swift in Sources */,
