@@ -23,6 +23,7 @@
 		5342D55524FB2A2E00D16764 /* CoreDataContextParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D54124FB2A2E00D16764 /* CoreDataContextParent.swift */; };
 		5342D55C24FB2F7400D16764 /* CoreDataError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D55A24FB2F7400D16764 /* CoreDataError.swift */; };
 		5342D55D24FB2F7400D16764 /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5342D55B24FB2F7400D16764 /* StorageError.swift */; };
+		5368DD2424FEEF810075BDB1 /* APWebAuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5368DD2224FEEF810075BDB1 /* APWebAuthenticationTests.swift */; };
 		537EDD0E24F49F1E003DC54A /* SugarRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EDD0424F49F1E003DC54A /* SugarRecord.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +55,8 @@
 		5342D54224FB2A2E00D16764 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5342D55A24FB2F7400D16764 /* CoreDataError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataError.swift; sourceTree = "<group>"; };
 		5342D55B24FB2F7400D16764 /* StorageError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
+		5368DD2224FEEF810075BDB1 /* APWebAuthenticationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APWebAuthenticationTests.swift; sourceTree = "<group>"; };
+		5368DD2324FEEF810075BDB1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		537EDD0424F49F1E003DC54A /* SugarRecord.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SugarRecord.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EDD0D24F49F1E003DC54A /* SugarRecordTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SugarRecordTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CEFC65EA4F1FBEAFA9274D5 /* Pods_KKProgressToolbar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KKProgressToolbar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,10 +129,20 @@
 			name = Errors;
 			sourceTree = "<group>";
 		};
+		5368DD2124FEEF810075BDB1 /* SugarRecordTests */ = {
+			isa = PBXGroup;
+			children = (
+				5368DD2224FEEF810075BDB1 /* APWebAuthenticationTests.swift */,
+				5368DD2324FEEF810075BDB1 /* Info.plist */,
+			);
+			path = SugarRecordTests;
+			sourceTree = "<group>";
+		};
 		537EDCFA24F49F1E003DC54A = {
 			isa = PBXGroup;
 			children = (
 				5342D52324FB2A2E00D16764 /* SugarRecord */,
+				5368DD2124FEEF810075BDB1 /* SugarRecordTests */,
 				537EDD0524F49F1E003DC54A /* Products */,
 				359E1023AF3D4F001CDF4411 /* Frameworks */,
 			);
@@ -276,6 +289,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5368DD2424FEEF810075BDB1 /* APWebAuthenticationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,13 +478,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ProgressToolbarTests/Info.plist;
+				INFOPLIST_FILE = SugarRecordTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = KK.ProgressToolbarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = SugarRecordTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -482,13 +496,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ProgressToolbarTests/Info.plist;
+				INFOPLIST_FILE = SugarRecordTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = KK.ProgressToolbarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = SugarRecordTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
