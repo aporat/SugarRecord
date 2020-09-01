@@ -13,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: pod install
     - name: Run iOS tests
       run: xcodebuild test -scheme SugarRecordTests -destination platform="iOS Simulator,name=iPhone 11 Pro"
