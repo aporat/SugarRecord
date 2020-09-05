@@ -1,7 +1,7 @@
-import Foundation
 import CoreData
+import Foundation
 
 enum CoreDataContextParent {
-  case coordinator(NSPersistentStoreCoordinator)
-  case context(NSManagedObjectContext)
+    case coordinator(NSPersistentStoreCoordinator)
+    case context(NSManagedObjectContext)
 }

@@ -1,9 +1,7 @@
 import Foundation
 
 extension String {
-  
-  static var documentDirectory: String {
-    return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-  }
-  
+    static var documentDirectory: String {
+        NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+    }
 }
