@@ -4,7 +4,7 @@ import Foundation
 // MARK: - Entity Protocol
 
 extension NSManagedObject {
-    open class var entityName: String {
+    public class var entityName: String {
         NSStringFromClass(self).components(separatedBy: ".").last!.replacingOccurrences(of: "Entity", with: "")
     }
 }
