@@ -2,7 +2,7 @@ import CoreData
 import Foundation
 
 /// Defines how to locate and load a Core Data object model (`.xcdatamodeld` / `.momd`).
-public enum CoreDataObjectModel {
+public enum CoreDataObjectModel: Sendable {
     /// A model stored in a named `.momd` resource inside a bundle.
     case named(String, Bundle)
     /// Merge all models found in the given bundles (or all bundles if `nil`).

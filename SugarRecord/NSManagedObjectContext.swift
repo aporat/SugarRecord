@@ -30,7 +30,7 @@ extension NSManagedObjectContext: Context {
 
     // MARK: Fetching
 
-    public func fetchAll<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
+    public func fetch<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -42,7 +42,7 @@ extension NSManagedObjectContext: Context {
         return results.compactMap { $0 as? T }
     }
 
-    public func fetchFirst<T: Entity>(_ request: FetchRequest<T>) throws -> T? {
+    public func fetchOne<T: Entity>(_ request: FetchRequest<T>) throws -> T? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -56,14 +56,14 @@ extension NSManagedObjectContext: Context {
 
     // MARK: Creation / insertion
 
-    public func insertEntity<T: Entity>(_ entity: T) throws {
+    public func insert<T: Entity>(_ entity: T) throws {
         guard let mo = entity as? NSManagedObject else { throw StorageError.invalidType }
         if mo.managedObjectContext == nil {
             self.insert(mo)
         }
     }
 
-    public func makeNewEntity<T: Entity>() throws -> T {
+    public func new<T: Entity>() throws -> T {
         guard let type = T.self as? NSManagedObject.Type else { throw StorageError.invalidType }
         let obj = NSEntityDescription.insertNewObject(forEntityName: type.entityName, into: self)
         guard let typed = obj as? T else { throw StorageError.invalidType }
@@ -72,7 +72,7 @@ extension NSManagedObjectContext: Context {
 
     // MARK: Querying
 
-    public func queryAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
+    public func query<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -87,7 +87,7 @@ extension NSManagedObjectContext: Context {
         return results.compactMap { $0 as? [String: Any] }
     }
 
-    public func queryAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> [String]? {
+    public func query<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> [String]? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -108,7 +108,7 @@ extension NSManagedObjectContext: Context {
         return elements
     }
 
-    public func queryDistinctAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>? {
+    public func querySet<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -119,6 +119,7 @@ extension NSManagedObjectContext: Context {
         fr.propertiesToFetch = [attribute]
         fr.resultType = .dictionaryResultType
         fr.returnsDistinctResults = true
+        fr.propertiesToGroupBy = [attribute] // improves correctness on SQLite
 
         let results = try fetch(fr)
         var ids = Set<String>()
@@ -132,7 +133,7 @@ extension NSManagedObjectContext: Context {
         return ids
     }
 
-    public func queryFirstAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]? {
+    public func queryOne<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -147,7 +148,7 @@ extension NSManagedObjectContext: Context {
         return results.compactMap { $0 as? [String: Any] }.first
     }
 
-    public func countEntities<T: Entity>(_ request: FetchRequest<T>) -> Int {
+    public func count<T: Entity>(_ request: FetchRequest<T>) -> Int {
         guard let fr = try? makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -161,7 +162,7 @@ extension NSManagedObjectContext: Context {
 
     // MARK: Deletion
 
-    public func deleteEntities<T: Entity>(_ objects: [T]) throws {
+    public func remove<T: Entity>(_ objects: [T]) throws {
         for object in objects {
             if let mo = object as? NSManagedObject {
                 delete(mo)
@@ -169,7 +170,7 @@ extension NSManagedObjectContext: Context {
         }
     }
 
-    // `deleteEntity(_:)` has a default implementation in the protocol extension.
+    // `remove(_ object:)` has a default implementation in the protocol extension.
 
     // MARK: Saving
 

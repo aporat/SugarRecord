@@ -2,24 +2,24 @@ import Foundation
 
 public protocol Context: Requestable {
     // Fetching
-    func fetchAll<T: Entity>(_ request: FetchRequest<T>) throws -> [T]
-    func fetchFirst<T: Entity>(_ request: FetchRequest<T>) throws -> T?
+    func fetch<T>(_ request: FetchRequest<T>) throws -> [T] where T: Entity
+    func fetchOne<T>(_ request: FetchRequest<T>) throws -> T? where T: Entity
 
     // Creation / insertion
-    func insertEntity<T: Entity>(_ entity: T) throws
-    func makeNewEntity<T: Entity>() throws -> T
-    func createAndInsertEntity<T: Entity>() throws -> T
+    func insert<T>(_ entity: T) throws where T: Entity
+    func new<T>() throws -> T where T: Entity
+    func create<T>() throws -> T where T: Entity
 
     // Querying
-    func queryAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]]
-    func queryAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> [String]?
-    func queryDistinctAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>?
-    func queryFirstAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]?
-    func countEntities<T: Entity>(_ request: FetchRequest<T>) -> Int
+    func query<T>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] where T: Entity
+    func query<T>(_ request: FetchRequest<T>, attribute: String) throws -> [String]? where T: Entity
+    func querySet<T>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>? where T: Entity
+    func queryOne<T>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]? where T: Entity
+    func count<T>(_ request: FetchRequest<T>) -> Int where T: Entity
 
     // Deletion
-    func deleteEntities<T: Entity>(_ objects: [T]) throws
-    func deleteEntity<T: Entity>(_ object: T) throws
+    func remove<T>(_ objects: [T]) throws where T: Entity
+    func remove<T>(_ object: T) throws where T: Entity
 
     // Saving
     func saveToPersistentStore(_ completion: ((Swift.Result<Any?, any Error>) -> Void)?)
@@ -32,13 +32,13 @@ public protocol Context: Requestable {
 // MARK: - Default conveniences
 
 public extension Context {
-    func createAndInsertEntity<T: Entity>() throws -> T {
-        let instance: T = try makeNewEntity()
-        try insertEntity(instance)
+    func create<T>() throws -> T where T: Entity {
+        let instance: T = try new()
+        try insert(instance)
         return instance
     }
 
-    func deleteEntity<T: Entity>(_ object: T) throws {
-        try deleteEntities([object])
+    func remove<T>(_ object: T) throws where T: Entity {
+        try remove([object])
     }
 }

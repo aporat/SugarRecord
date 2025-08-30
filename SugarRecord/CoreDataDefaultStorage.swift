@@ -161,7 +161,7 @@ internal func createStoreParentPathIfNeeded(store: CoreDataStore) throws {
 internal func addPersistentStore(
     store: CoreDataStore,
     storeCoordinator: NSPersistentStoreCoordinator,
-    options: [String: Any]   // <- changed to Any to match CoreDataOptions.settings
+    options: [String: Any]
 ) throws -> NSPersistentStore {
     func add(
         _ store: CoreDataStore,
@@ -191,13 +191,11 @@ internal func addPersistentStore(
                 _ = try? cleanStoreFilesAfterFailedMigration(store: store)
                 return try add(store, storeCoordinator, options, false)
             } else {
-                // wrap the underlying error in your CoreDataError case
                 throw CoreDataError.persistentStoreInitialization(underlying: error)
             }
         } else if let persistentStore = persistentStore {
             return persistentStore
         }
-        // no error captured but store not created: generic initialization failure
         throw CoreDataError.persistentStoreInitialization()
     }
     return try add(store, storeCoordinator, options, true)

@@ -38,47 +38,47 @@ public struct FetchRequest<T: Entity>: Equatable {
         self.fetchLimit = fetchLimit
     }
     
-    // MARK: - Public Fetching Methods
+    // MARK: - Public Fetching Methods (aligned with Context)
     
-    public func fetchAll() throws -> [T] {
+    public func fetch() throws -> [T] {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.fetchAll(self)
+        return try ctx.fetch(self)
     }
     
-    public func fetchAll(from requestable: any Requestable) throws -> [T] {
-        try requestable.requestContext().fetchAll(self)
+    public func fetch(_ requestable: any Requestable) throws -> [T] {
+        try requestable.requestContext().fetch(self)
     }
     
-    public func fetchFirst() throws -> T? {
+    public func fetchOne() throws -> T? {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.fetchFirst(self)
+        return try ctx.fetchOne(self)
     }
     
     public func count() -> Int {
         guard let ctx = context else { return 0 }
-        return ctx.countEntities(self)
+        return ctx.count(self)
     }
     
-    // MARK: - Public Query Methods
+    // MARK: - Public Query Methods (original names)
     
-    public func queryAttributes(_ attributes: [String]) throws -> [[String: Any]] {
+    public func query(attributes: [String]) throws -> [[String: Any]] {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.queryAttributes(self, attributes: attributes)
+        return try ctx.query(self, attributes: attributes)
     }
     
-    public func queryFirstAttributes(_ attributes: [String]) throws -> [String: Any]? {
+    public func queryOne(attributes: [String]) throws -> [String: Any]? {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.queryFirstAttributes(self, attributes: attributes)
+        return try ctx.queryOne(self, attributes: attributes)
     }
     
-    public func queryAttributeValues(_ attribute: String) throws -> [String]? {
+    public func query(attribute: String) throws -> [String]? {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.queryAttributeValues(self, attribute: attribute)
+        return try ctx.query(self, attribute: attribute)
     }
     
-    public func queryDistinctAttributeValues(_ attribute: String) throws -> Set<String>? {
+    public func querySet(attribute: String) throws -> Set<String>? {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
-        return try ctx.queryDistinctAttributeValues(self, attribute: attribute)
+        return try ctx.querySet(self, attribute: attribute)
     }
     
     // MARK: - Builder Methods
