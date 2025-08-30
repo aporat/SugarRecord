@@ -1,10 +1,14 @@
 import CoreData
 import Foundation
 
+// Avoid existential-generic warnings; use this alias where you previously wrote
+// `NSFetchRequest<any NSFetchRequestResult>`.
+public typealias AnyFetchRequest = NSFetchRequest<any NSFetchRequestResult>
+
 // MARK: - NSManagedObjectContext Extension (Context)
 
 extension NSManagedObjectContext: Context {
-    
+
     // Small helper to avoid repeating boilerplate
     private func makeRequest<T: Entity>(
         for type: T.Type,
@@ -12,19 +16,21 @@ extension NSManagedObjectContext: Context {
         sort: NSSortDescriptor?,
         offset: Int,
         limit: Int
-    ) throws -> NSFetchRequest<any NSFetchRequestResult> {
+    ) throws -> AnyFetchRequest {
         guard let entityType = T.self as? NSManagedObject.Type else {
             throw StorageError.invalidType
         }
-        let fr = NSFetchRequest<any NSFetchRequestResult>(entityName: entityType.entityName)
+        let fr = AnyFetchRequest(entityName: entityType.entityName)
         fr.predicate = predicate
         fr.sortDescriptors = sort.map { [$0] }
         fr.fetchOffset = offset
         fr.fetchLimit = limit
         return fr
     }
-    
-    public func fetch<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
+
+    // MARK: Fetching
+
+    public func fetchAll<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -33,11 +39,10 @@ extension NSManagedObjectContext: Context {
             limit: request.fetchLimit
         )
         let results = try fetch(fr)
-        // Be defensive: avoid force-cast crash
         return results.compactMap { $0 as? T }
     }
-    
-    public func fetchOne<T: Entity>(_ request: FetchRequest<T>) throws -> T? {
+
+    public func fetchFirst<T: Entity>(_ request: FetchRequest<T>) throws -> T? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -48,8 +53,26 @@ extension NSManagedObjectContext: Context {
         let results = try fetch(fr)
         return results.first as? T
     }
-    
-    public func query<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
+
+    // MARK: Creation / insertion
+
+    public func insertEntity<T: Entity>(_ entity: T) throws {
+        guard let mo = entity as? NSManagedObject else { throw StorageError.invalidType }
+        if mo.managedObjectContext == nil {
+            self.insert(mo)
+        }
+    }
+
+    public func makeNewEntity<T: Entity>() throws -> T {
+        guard let type = T.self as? NSManagedObject.Type else { throw StorageError.invalidType }
+        let obj = NSEntityDescription.insertNewObject(forEntityName: type.entityName, into: self)
+        guard let typed = obj as? T else { throw StorageError.invalidType }
+        return typed
+    }
+
+    // MARK: Querying
+
+    public func queryAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -59,12 +82,12 @@ extension NSManagedObjectContext: Context {
         )
         fr.propertiesToFetch = attributes
         fr.resultType = .dictionaryResultType
-        
+
         let results = try fetch(fr)
         return results.compactMap { $0 as? [String: Any] }
     }
-    
-    public func query<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> [String]? {
+
+    public func queryAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> [String]? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -74,7 +97,7 @@ extension NSManagedObjectContext: Context {
         )
         fr.propertiesToFetch = [attribute]
         fr.resultType = .dictionaryResultType
-        
+
         let results = try fetch(fr)
         var elements: [String] = []
         results.compactMap { $0 as? [String: Any] }.forEach {
@@ -84,8 +107,8 @@ extension NSManagedObjectContext: Context {
         }
         return elements
     }
-    
-    public func querySet<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>? {
+
+    public func queryDistinctAttributeValues<T: Entity>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String>? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -95,10 +118,9 @@ extension NSManagedObjectContext: Context {
         )
         fr.propertiesToFetch = [attribute]
         fr.resultType = .dictionaryResultType
-        fr.returnsDistinctResults = true  // ensure distinctness at the SQL level when possible
-        
+        fr.returnsDistinctResults = true
+
         let results = try fetch(fr)
-        
         var ids = Set<String>()
         if let dicts = results as? [[String: Any]] {
             for item in dicts {
@@ -109,8 +131,8 @@ extension NSManagedObjectContext: Context {
         }
         return ids
     }
-    
-    public func queryOne<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]? {
+
+    public func queryFirstAttributes<T: Entity>(_ request: FetchRequest<T>, attributes: [String]) throws -> [String: Any]? {
         let fr = try makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -120,13 +142,12 @@ extension NSManagedObjectContext: Context {
         )
         fr.propertiesToFetch = attributes
         fr.resultType = .dictionaryResultType
-        
+
         let results = try fetch(fr)
         return results.compactMap { $0 as? [String: Any] }.first
     }
-    
-    public func count<T: Entity>(_ request: FetchRequest<T>) -> Int {
-        // Keep signature the same; return 0 on error as before
+
+    public func countEntities<T: Entity>(_ request: FetchRequest<T>) -> Int {
         guard let fr = try? makeRequest(
             for: T.self,
             predicate: request.predicate,
@@ -134,35 +155,24 @@ extension NSManagedObjectContext: Context {
             offset: 0,
             limit: 0
         ) else { return 0 }
-        
+
         return (try? self.count(for: fr)) ?? 0
     }
-    
-    // Insert semantics for Core Data: if object is unmanaged, insert it.
-    public func insert<T: Entity>(_ object: T) throws {
-        guard let mo = object as? NSManagedObject else { throw StorageError.invalidType }
-        if mo.managedObjectContext == nil {
-            self.insert(mo)
-        }
-    }
-    
-    public func new<T: Entity>() throws -> T {
-        guard let entity = T.self as? NSManagedObject.Type else { throw StorageError.invalidType }
-        let object = NSEntityDescription.insertNewObject(forEntityName: entity.entityName, into: self)
-        if let inserted = object as? T {
-            return inserted
-        }
-        throw StorageError.invalidType
-    }
-    
-    public func remove<T: Entity>(_ objects: [T]) throws {
+
+    // MARK: Deletion
+
+    public func deleteEntities<T: Entity>(_ objects: [T]) throws {
         for object in objects {
             if let mo = object as? NSManagedObject {
                 delete(mo)
             }
         }
     }
-    
+
+    // `deleteEntity(_:)` has a default implementation in the protocol extension.
+
+    // MARK: Saving
+
     public func saveToPersistentStore(_ completion: ((Swift.Result<Any?, any Error>) -> Void)? = nil) {
         performAndWait {
             do {
@@ -177,9 +187,9 @@ extension NSManagedObjectContext: Context {
             }
         }
     }
-    
+
     // MARK: - Batch Actions
-    
+
     public func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) {
         let request = NSBatchUpdateRequest(entityName: entityName)
         request.propertiesToUpdate = propertiesToUpdate
@@ -187,9 +197,9 @@ extension NSManagedObjectContext: Context {
         request.predicate = predicate
         _ = try? execute(request)
     }
-    
+
     public func batchDelete(entityName: String, predicate: NSPredicate?) {
-        let fetch = NSFetchRequest<any NSFetchRequestResult>(entityName: entityName)
+        let fetch = AnyFetchRequest(entityName: entityName)
         fetch.predicate = predicate
         let request = NSBatchDeleteRequest(fetchRequest: fetch)
         _ = try? execute(request)
@@ -202,16 +212,16 @@ extension NSManagedObjectContext {
     func observe(inMainThread mainThread: Bool, saveNotification: @escaping (_ notification: Notification) -> Void) {
         let queue: OperationQueue = mainThread ? .main : OperationQueue()
         NotificationCenter.default.addObserver(
-            forName: NSManagedObjectContext.didSaveObjectsNotification,
+            forName: NSNotification.Name.NSManagedObjectContextDidSave,
             object: self,
             queue: queue,
             using: saveNotification
         )
     }
-    
+
     func observeToGetPermanentIDsBeforeSaving() {
         NotificationCenter.default.addObserver(
-            forName: NSManagedObjectContext.willSaveObjectsNotification,
+            forName: NSNotification.Name.NSManagedObjectContextWillSave,
             object: self,
             queue: nil
         ) { [weak self] _ in

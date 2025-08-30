@@ -1,11 +1,13 @@
 import CoreData
 import Foundation
 
-public enum CoreDataOptions {
+/// Standard Core Data persistent store options.
+public enum CoreDataOptions: Sendable {
     case basic
     case migration
     
-    public var settings: [String: AnyObject] {
+    /// Store configuration dictionary for NSPersistentStoreCoordinator.
+    public var settings: [String: Any] {
         switch self {
         case .basic:
             return CoreDataOptions.makeOptions(inferMapping: false)
@@ -14,13 +16,13 @@ public enum CoreDataOptions {
         }
     }
     
-    private static func makeOptions(inferMapping: Bool) -> [String: AnyObject] {
+    private static func makeOptions(inferMapping: Bool) -> [String: Any] {
         let sqliteOptions: [String: String] = ["journal_mode": "DELETE"]
         
-        var options: [String: AnyObject] = [:]
-        options[NSMigratePersistentStoresAutomaticallyOption] = NSNumber(value: true)
-        options[NSInferMappingModelAutomaticallyOption] = NSNumber(value: inferMapping)
-        options[NSSQLitePragmasOption] = sqliteOptions as AnyObject
-        return options
+        return [
+            NSMigratePersistentStoresAutomaticallyOption: true,
+            NSInferMappingModelAutomaticallyOption: inferMapping,
+            NSSQLitePragmasOption: sqliteOptions
+        ]
     }
 }

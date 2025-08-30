@@ -23,13 +23,13 @@ public protocol Storage: CustomStringConvertible, Requestable {
     )
     
     /// Fetch entities using the main context.
-    func fetch<T: Entity>(_ request: FetchRequest<T>) throws -> [T]
+    func fetchAll<T: Entity>(_ request: FetchRequest<T>) throws -> [T]
 }
 
 // MARK: - Default fetch helper
 
 public extension Storage {
-    func fetch<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
-        try mainContext.fetch(request)
+    func fetchAll<T: Entity>(_ request: FetchRequest<T>) throws -> [T] {
+        try mainContext.fetchAll(request)
     }
 }

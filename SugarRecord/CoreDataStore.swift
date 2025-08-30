@@ -1,15 +1,17 @@
 import CoreData
 import Foundation
 
-public enum CoreDataStore {
+/// Identifies a Core Data store location.
+public enum CoreDataStore: Sendable {
     case named(String)
     case url(URL)
-    
-    public func path() -> URL {
+
+    /// The resolved URL of the store.
+    public var path: URL {
         switch self {
-        case let .url(url):
+        case .url(let url):
             return url
-        case let .named(name):
+        case .named(let name):
             return URL.documentDirectory.appendingPathComponent(name)
         }
     }
@@ -20,8 +22,10 @@ public enum CoreDataStore {
 extension CoreDataStore: CustomStringConvertible {
     public var description: String {
         switch self {
-        case .named(let name): return "CoreData Store (named: \(name)) @ \(path())"
-        case .url(let url):    return "CoreData Store (url) @ \(url)"
+        case .named(let name):
+            return "CoreDataStore(named: \(name)) → \(path.path)"
+        case .url(let url):
+            return "CoreDataStore(url: \(url.path))"
         }
     }
 }
@@ -31,10 +35,10 @@ extension CoreDataStore: CustomStringConvertible {
 extension CoreDataStore: Equatable {}
 extension CoreDataStore: Hashable {}
 
-
 // MARK: - Helpers
 
 extension URL {
+    /// The app’s document directory.
     static var documentDirectory: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
