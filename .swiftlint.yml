@@ -1,0 +1,18 @@
+disabled_rules:
+  - trailing_whitespace
+  - todo
+opt_in_rules:
+  - explicit_init
+  - closure_end_indentation
+  - empty_count
+line_length:
+  warning: 110
+type_body_length:
+  warning: 300
+file_length:
+  warning: 800
+identifier_name:
+  min_length: 2
+included:
+  - SugarRecord
+  - SugarRecordTests

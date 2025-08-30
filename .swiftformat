@@ -1,0 +1,5 @@
+--indent 2
+--maxwidth 110
+--stripunusedargs closure-only
+--wraparguments before-first
+--wrapcollections before-first

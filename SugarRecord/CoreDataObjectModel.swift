@@ -6,12 +6,15 @@ public enum CoreDataObjectModel {
     case merged([Bundle]?)
     case url(URL)
 
-    func model() -> NSManagedObjectModel? {
+    public func model() -> NSManagedObjectModel? {
         switch self {
         case let .merged(bundles):
             return NSManagedObjectModel.mergedModel(from: bundles)
         case let .named(name, bundle):
-            return NSManagedObjectModel(contentsOf: bundle.url(forResource: name, withExtension: "momd")!)
+            guard let url = bundle.url(forResource: name, withExtension: "momd") else {
+                return nil
+            }
+            return NSManagedObjectModel(contentsOf: url)
         case let .url(url):
             return NSManagedObjectModel(contentsOf: url)
         }
@@ -23,17 +26,20 @@ public enum CoreDataObjectModel {
 extension CoreDataObjectModel: CustomStringConvertible {
     public var description: String {
         switch self {
-        case let .named(name, _): return "NSManagedObject model named: \(name) in the main NSBundle"
-        case .merged: return "Merged NSManagedObjec models in the provided bundles"
-        case let .url(url): return "NSManagedObject model in the URL: \(url)"
+        case let .named(name, bundle):
+            return "NSManagedObject model named: \(name) in bundle: \(bundle.bundleIdentifier ?? "unknown")"
+        case .merged:
+            return "Merged NSManagedObject models in the provided bundles"
+        case let .url(url):
+            return "NSManagedObject model at URL: \(url)"
         }
     }
 }
 
 // MARK: - ObjectModel Extension (Equatable)
 
-extension CoreDataObjectModel: Equatable {}
-
-public func == (lhs: CoreDataObjectModel, rhs: CoreDataObjectModel) -> Bool {
-    lhs.model() == rhs.model()
+extension CoreDataObjectModel: Equatable {
+    public static func == (lhs: CoreDataObjectModel, rhs: CoreDataObjectModel) -> Bool {
+        lhs.model() == rhs.model()
+    }
 }

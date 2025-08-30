@@ -1,6 +1,10 @@
 import Foundation
 
-public protocol NSSortDescriptorConvertible {
+/// A type that can be bridged to and from an `NSSortDescriptor`.
+public protocol NSSortDescriptorConvertible: Sendable {
+    /// Initialize from an existing sort descriptor.
     init(sortDescriptor: NSSortDescriptor)
-    var sortDescriptor: NSSortDescriptor? { get }
+
+    /// The bridged sort descriptor.
+    var sortDescriptor: NSSortDescriptor { get }
 }

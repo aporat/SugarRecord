@@ -1,26 +1,34 @@
 import Foundation
 
 public protocol Requestable {
-    func requestContext() -> Context
-    func request<T>(_ model: T.Type) -> FetchRequest<T>
+    /// The default `Context` used when building fetch requests.
+    func requestContext() -> any Context
+
+    /// Create a `FetchRequest` for the given entity type.
+    func request<T: Entity>(_ model: T.Type) -> FetchRequest<T>
+
+    /// Convenience: infer `T` from the call site (e.g. `request() as FetchRequest<User>`).
+    func request<T: Entity>() -> FetchRequest<T>
 }
 
 public extension Requestable where Self: Context {
-    func requestContext() -> Context {
-        self
-    }
+    @inline(__always)
+    func requestContext() -> any Context { self }
 
-    func request<T>(_: T.Type) -> FetchRequest<T> {
-        FetchRequest<T>(self)
-    }
+    @inline(__always)
+    func request<T: Entity>(_: T.Type) -> FetchRequest<T> { FetchRequest<T>(self) }
+
+    @inline(__always)
+    func request<T: Entity>() -> FetchRequest<T> { FetchRequest<T>(self) }
 }
 
 public extension Requestable where Self: Storage {
-    func requestContext() -> Context {
-        mainContext
-    }
+    @inline(__always)
+    func requestContext() -> any Context { mainContext }
 
-    func request<T>(_: T.Type) -> FetchRequest<T> {
-        FetchRequest<T>(mainContext)
-    }
+    @inline(__always)
+    func request<T: Entity>(_: T.Type) -> FetchRequest<T> { FetchRequest<T>(mainContext) }
+
+    @inline(__always)
+    func request<T: Entity>() -> FetchRequest<T> { FetchRequest<T>(mainContext) }
 }

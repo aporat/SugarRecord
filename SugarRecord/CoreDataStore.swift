@@ -7,9 +7,10 @@ public enum CoreDataStore {
 
     public func path() -> URL {
         switch self {
-        case let .url(url): return url
+        case let .url(url):
+            return url
         case let .named(name):
-            return URL(fileURLWithPath: String.documentDirectory).appendingPathComponent(name)
+            return URL.documentDirectory.appendingPathComponent(name)
         }
     }
 }
@@ -18,14 +19,23 @@ public enum CoreDataStore {
 
 extension CoreDataStore: CustomStringConvertible {
     public var description: String {
-        "CoreData Store: \(path())"
+        switch self {
+        case .named(let name): return "CoreData Store (named: \(name)) @ \(path())"
+        case .url(let url):    return "CoreData Store (url) @ \(url)"
+        }
     }
 }
 
-// MARK: - Store Extension (Equatable)
+// MARK: - Conformances
 
 extension CoreDataStore: Equatable {}
+extension CoreDataStore: Hashable {}
 
-public func == (lhs: CoreDataStore, rhs: CoreDataStore) -> Bool {
-    lhs.path() == rhs.path()
+
+// MARK: - Helpers
+
+extension URL {
+    static var documentDirectory: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
 }
