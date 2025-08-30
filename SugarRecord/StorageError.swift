@@ -19,7 +19,7 @@ public extension StorageError {
         // Adjust the mapping if you prefer a different bucket.
         self = .store(error)
     }
-
+    
     /// A lightweight policy you can refine over time.
     var isRetriable: Bool {
         switch self {
@@ -58,7 +58,7 @@ extension StorageError: LocalizedError {
 
 extension StorageError: CustomNSError {
     public static var errorDomain: String { "com.aporat.SugarRecord.StorageError" }
-
+    
     public var errorCode: Int {
         switch self {
         case .writeError:            return 1
@@ -69,13 +69,13 @@ extension StorageError: CustomNSError {
         case .unknown:               return 999
         }
     }
-
+    
     public var errorUserInfo: [String : Any] {
         var info: [String: Any] = [NSLocalizedDescriptionKey: errorDescription ?? ""]
-
+        
         switch self {
         case .fetchError(let underlying),
-             .store(let underlying):
+                .store(let underlying):
             info[NSUnderlyingErrorKey] = underlying
         case .invalidOperation(let message):
             info["OperationMessage"] = message

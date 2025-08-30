@@ -3,7 +3,7 @@ import Foundation
 
 public enum CoreDataError: Error {
     case invalidModel(CoreDataObjectModel)
-
+    
     /// Preferred, correctly spelled case. Carries an optional underlying error.
     case persistentStoreInitialization(underlying: (any Error)? = nil)
 }
@@ -28,14 +28,14 @@ extension CoreDataError: LocalizedError {
 
 extension CoreDataError: CustomNSError {
     public static var errorDomain: String { "com.aporat.SugarRecord.CoreDataError" }
-
+    
     public var errorCode: Int {
         switch self {
         case .invalidModel:                   return 1
         case .persistentStoreInitialization:  return 2
         }
     }
-
+    
     public var errorUserInfo: [String : Any] {
         var info: [String: Any] = [NSLocalizedDescriptionKey: errorDescription ?? ""]
         if case .persistentStoreInitialization(let underlying?) = self {

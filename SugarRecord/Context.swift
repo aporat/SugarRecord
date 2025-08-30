@@ -26,7 +26,7 @@ public extension Context {
         try insert(instance)
         return instance
     }
-
+    
     func remove<T: Entity>(_ object: T) throws {
         try remove([object])
     }

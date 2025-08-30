@@ -3,21 +3,21 @@ import Foundation
 
 public class CoreDataDefaultStorage: Storage {
     // MARK: - Attributes
-
+    
     internal let store: CoreDataStore
     internal var objectModel: NSManagedObjectModel!
     internal var persistentStore: NSPersistentStore!
     internal var persistentStoreCoordinator: NSPersistentStoreCoordinator!
     internal var rootSavingContext: NSManagedObjectContext!
-
+    
     // MARK: - Storage conformance
-
+    
     public var description: String {
         "CoreDataDefaultStorage"
     }
-
+    
     public var mainContext: any Context
-
+    
     public lazy var saveContext: any Context = {
         let ctx = cdContext(withParent: .context(rootSavingContext),
                             concurrencyType: .privateQueueConcurrencyType)
@@ -27,14 +27,14 @@ public class CoreDataDefaultStorage: Storage {
         }
         return ctx
     }()
-
+    
     public func operation<T>(
         _ operation: @escaping (_ context: any Context, _ save: @escaping () -> Void) throws -> T
     ) throws -> T {
         let context: NSManagedObjectContext = saveContext as! NSManagedObjectContext
         var _error: (any Error)!
         var returnedObject: T!
-
+        
         context.performAndWait {
             do {
                 returnedObject = try operation(context) {
@@ -57,11 +57,11 @@ public class CoreDataDefaultStorage: Storage {
                 _error = error
             }
         }
-
+        
         if let error = _error { throw error }
         return returnedObject
     }
-
+    
     public func backgroundOperation(
         _ operation: @escaping (_ context: any Context, _ save: @escaping () -> Void) -> Void,
         completion: @escaping ((any Error)?) -> Void
@@ -88,21 +88,21 @@ public class CoreDataDefaultStorage: Storage {
             }
         }
     }
-
+    
     public func removeStore() throws {
         let url = store.path()
         let dir = url.deletingLastPathComponent()
         let base = url.lastPathComponent
         let shm = dir.appendingPathComponent(base + "-shm")
         let wal = dir.appendingPathComponent(base + "-wal")
-
+        
         try FileManager.default.removeItem(at: url)
         _ = try? FileManager.default.removeItem(at: shm)
         _ = try? FileManager.default.removeItem(at: wal)
     }
-
+    
     // MARK: - Init
-
+    
     public init(store: CoreDataStore, model: CoreDataObjectModel, migrate: Bool = true) throws {
         self.store = store
         objectModel = model.model()!
@@ -124,9 +124,9 @@ internal func cdContext(
     concurrencyType: NSManagedObjectContextConcurrencyType
 ) -> NSManagedObjectContext {
     var context: NSManagedObjectContext?
-
+    
     context = NSManagedObjectContext(concurrencyType: concurrencyType)
-
+    
     if let parent = parent {
         switch parent {
         case let .context(parentContext):
@@ -185,8 +185,8 @@ internal func cdAddPersistentStore(
         }
         if let error = error {
             let isMigrationError =
-                error.code == NSPersistentStoreIncompatibleVersionHashError ||
-                error.code == NSMigrationMissingSourceModelError
+            error.code == NSPersistentStoreIncompatibleVersionHashError ||
+            error.code == NSMigrationMissingSourceModelError
             if isMigrationError && cleanAndRetryIfMigrationFails {
                 _ = try? cdCleanStoreFilesAfterFailedMigration(store: store)
                 return try addStore(store, storeCoordinator, options, false)
@@ -208,7 +208,7 @@ internal func cdCleanStoreFilesAfterFailedMigration(store: CoreDataStore) throws
     let base = url.lastPathComponent
     let shm = dir.appendingPathComponent(base + "-shm")
     let wal = dir.appendingPathComponent(base + "-wal")
-
+    
     try FileManager.default.removeItem(at: url)
     _ = try? FileManager.default.removeItem(at: shm)
     _ = try? FileManager.default.removeItem(at: wal)

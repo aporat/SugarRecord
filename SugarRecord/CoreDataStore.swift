@@ -4,7 +4,7 @@ import Foundation
 public enum CoreDataStore {
     case named(String)
     case url(URL)
-
+    
     public func path() -> URL {
         switch self {
         case let .url(url):
