@@ -12,7 +12,6 @@ let package = Package(
   targets: [
     .target(
       name: "SugarRecord",
-      path: "SugarRecord",
       swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
     ),
     .testTarget(
