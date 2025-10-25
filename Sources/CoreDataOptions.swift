@@ -1,8 +1,8 @@
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
 /// Standard Core Data persistent store options.
-public enum CoreDataOptions: Sendable {
+@frozen public enum CoreDataOptions: Sendable {
     case basic
     case migration
     

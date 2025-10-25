@@ -14,10 +14,12 @@ public enum StorageError: Error, Sendable {
 // MARK: - Convenience
 
 public extension StorageError {
-    /// Wrap any error into a `StorageError` (keeps your existing cases untouched).
     init(wrapping error: any Error) {
-        // Adjust the mapping if you prefer a different bucket.
-        self = .store(error)
+        if let storageError = error as? StorageError {
+            self = storageError
+        } else {
+            self = .store(error)
+        }
     }
     
     /// A lightweight policy you can refine over time.

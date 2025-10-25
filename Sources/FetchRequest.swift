@@ -3,10 +3,12 @@ import Foundation
 public struct FetchRequest<T: Entity>: Equatable {
     // MARK: - Attributes
     
+    // These types are not Sendable, so the struct can't be Sendable.
     public let sortDescriptor: NSSortDescriptor?
     public let predicate: NSPredicate?
     public let fetchOffset: Int
     public let fetchLimit: Int
+    
     let context: (any Context)?
     
     // MARK: - Init
@@ -25,20 +27,7 @@ public struct FetchRequest<T: Entity>: Equatable {
         self.fetchLimit = fetchLimit
     }
     
-    public init(
-        _ context: any Context,
-        predicate: NSPredicate? = nil,
-        fetchOffset: Int = 0,
-        fetchLimit: Int = 0
-    ) {
-        self.context = context
-        self.sortDescriptor = nil
-        self.predicate = predicate
-        self.fetchOffset = fetchOffset
-        self.fetchLimit = fetchLimit
-    }
-    
-    // MARK: - Public Fetching Methods (aligned with Context)
+    // MARK: - Public Fetching Methods
     
     public func fetch() throws -> [T] {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
@@ -59,7 +48,7 @@ public struct FetchRequest<T: Entity>: Equatable {
         return ctx.count(self)
     }
     
-    // MARK: - Public Query Methods (original names)
+    // MARK: - Public Query Methods
     
     public func query(attributes: [String]) throws -> [[String: Any]] {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
@@ -79,6 +68,47 @@ public struct FetchRequest<T: Entity>: Equatable {
     public func querySet(attribute: String) throws -> Set<String>? {
         guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
         return try ctx.querySet(self, attribute: attribute)
+    }
+    
+    public func fetch() async throws -> [T] {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.fetch(self)
+    }
+    
+    public func fetch(_ requestable: any Requestable) async throws -> [T] {
+        try await requestable.requestContext().fetch(self)
+    }
+    
+    public func fetchOne() async throws -> T? {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.fetchOne(self)
+    }
+    
+    public func count() async -> Int {
+        guard let ctx = context else { return 0 }
+        return await ctx.count(self)
+    }
+    
+    // MARK: - Public Query Methods (Async) - NEW
+    
+    public func query(attributes: [String]) async throws -> [[String: Any]] {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.query(self, attributes: attributes)
+    }
+    
+    public func queryOne(attributes: [String]) async throws -> [String: Any]? {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.queryOne(self, attributes: attributes)
+    }
+    
+    public func query(attribute: String) async throws -> [String]? {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.query(self, attribute: attribute)
+    }
+    
+    public func querySet(attribute: String) async throws -> Set<String>? {
+        guard let ctx = context else { throw StorageError.invalidOperation("FetchRequest has no context") }
+        return try await ctx.querySet(self, attribute: attribute)
     }
     
     // MARK: - Builder Methods
@@ -131,9 +161,9 @@ public struct FetchRequest<T: Entity>: Equatable {
                         fetchLimit: value)
     }
     
-    // MARK: - Internal
+    // MARK: - Private Helpers
     
-    func request(withPredicate predicate: NSPredicate) -> FetchRequest<T> {
+    private func request(withPredicate predicate: NSPredicate) -> FetchRequest<T> {
         FetchRequest<T>(context,
                         sortDescriptor: sortDescriptor,
                         predicate: predicate,
@@ -141,7 +171,7 @@ public struct FetchRequest<T: Entity>: Equatable {
                         fetchLimit: fetchLimit)
     }
     
-    func request(withSortDescriptor sortDescriptor: NSSortDescriptor) -> FetchRequest<T> {
+    private func request(withSortDescriptor sortDescriptor: NSSortDescriptor) -> FetchRequest<T> {
         FetchRequest<T>(context,
                         sortDescriptor: sortDescriptor,
                         predicate: predicate,

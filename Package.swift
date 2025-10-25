@@ -1,18 +1,17 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
   name: "SugarRecord",
   platforms: [
-    .iOS(.v14), .macOS(.v12), .watchOS(.v8), .tvOS(.v15)
+    .iOS(.v15)
   ],
   products: [
     .library(name: "SugarRecord", targets: ["SugarRecord"])
   ],
   targets: [
     .target(
-      name: "SugarRecord",
-      swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
+      name: "SugarRecord"
     ),
     .testTarget(
       name: "SugarRecordTests",

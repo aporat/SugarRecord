@@ -1,10 +1,9 @@
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
-public enum CoreDataError: Error {
+@frozen public enum CoreDataError: Error, Sendable {
     case invalidModel(CoreDataObjectModel)
     
-    /// Preferred, correctly spelled case. Carries an optional underlying error.
     case persistentStoreInitialization(underlying: (any Error)? = nil)
 }
 
@@ -31,8 +30,8 @@ extension CoreDataError: CustomNSError {
     
     public var errorCode: Int {
         switch self {
-        case .invalidModel:                   return 1
-        case .persistentStoreInitialization:  return 2
+        case .invalidModel:                  return 1
+        case .persistentStoreInitialization: return 2
         }
     }
     

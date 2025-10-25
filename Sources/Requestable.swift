@@ -1,5 +1,6 @@
 import Foundation
 
+/// A type that can build `FetchRequest`s.
 public protocol Requestable {
     /// The default `Context` used when building fetch requests.
     func requestContext() -> any Context

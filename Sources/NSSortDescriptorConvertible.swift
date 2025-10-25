@@ -1,4 +1,4 @@
-import Foundation
+@preconcurrency import Foundation
 
 /// A type that can be bridged to and from an `NSSortDescriptor`.
 public protocol NSSortDescriptorConvertible: Sendable {

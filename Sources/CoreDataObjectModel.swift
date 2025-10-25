@@ -1,8 +1,8 @@
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
 /// Defines how to locate and load a Core Data object model (`.xcdatamodeld` / `.momd`).
-public enum CoreDataObjectModel: Sendable {
+@frozen public enum CoreDataObjectModel: Sendable {
     /// A model stored in a named `.momd` resource inside a bundle.
     case named(String, Bundle)
     /// Merge all models found in the given bundles (or all bundles if `nil`).
@@ -33,8 +33,10 @@ extension CoreDataObjectModel: CustomStringConvertible {
         switch self {
         case let .named(name, bundle):
             return "CoreDataObjectModel.named(\(name), bundle: \(bundle.bundleIdentifier ?? "unknown"))"
-        case .merged:
-            return "CoreDataObjectModel.merged(bundles)"
+        case .merged(let bundles):
+            // Slightly cleaner description for the merged case
+            let bundleNames = (bundles ?? Bundle.allBundles).compactMap(\.bundleIdentifier).joined(separator: ", ")
+            return "CoreDataObjectModel.merged(bundles: [\(bundleNames)])"
         case let .url(url):
             return "CoreDataObjectModel.url(\(url.path))"
         }
@@ -46,5 +48,13 @@ extension CoreDataObjectModel: CustomStringConvertible {
 extension CoreDataObjectModel: Equatable {
     public static func == (lhs: CoreDataObjectModel, rhs: CoreDataObjectModel) -> Bool {
         lhs.load() == rhs.load()
+    }
+}
+
+// MARK: - Hashable
+
+extension CoreDataObjectModel: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(load())
     }
 }

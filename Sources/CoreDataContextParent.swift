@@ -3,7 +3,7 @@ import Foundation
 
 /// Represents the parent of a Core Data context.
 /// It can be backed either by a persistent store coordinator or another context.
-public enum CoreDataContextParent {
+@preconcurrency public enum CoreDataContextParent: Sendable {
     case storeCoordinator(NSPersistentStoreCoordinator)
     case parentContext(NSManagedObjectContext)
 }

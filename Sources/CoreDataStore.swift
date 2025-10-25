@@ -1,8 +1,19 @@
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
+// MARK: - Fileprivate Helpers
+
+fileprivate extension URL {
+    /// The app’s document directory.
+    static var documentDirectory: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+}
+
+// MARK: - CoreDataStore
+
 /// Identifies a Core Data store location.
-public enum CoreDataStore: Sendable {
+@frozen public enum CoreDataStore: Sendable, Equatable, Hashable {
     case named(String)
     case url(URL)
 
@@ -17,7 +28,7 @@ public enum CoreDataStore: Sendable {
     }
 }
 
-// MARK: - Store extension (CustomStringConvertible)
+// MARK: - CustomStringConvertible
 
 extension CoreDataStore: CustomStringConvertible {
     public var description: String {
@@ -27,19 +38,5 @@ extension CoreDataStore: CustomStringConvertible {
         case .url(let url):
             return "CoreDataStore(url: \(url.path))"
         }
-    }
-}
-
-// MARK: - Conformances
-
-extension CoreDataStore: Equatable {}
-extension CoreDataStore: Hashable {}
-
-// MARK: - Helpers
-
-extension URL {
-    /// The app’s document directory.
-    static var documentDirectory: URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
 }

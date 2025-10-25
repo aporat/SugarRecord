@@ -1,7 +1,7 @@
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
-public class CoreDataDefaultStorage: Storage {
+public class CoreDataDefaultStorage: Storage, @unchecked Sendable {
     // MARK: - Attributes
     
     internal let store: CoreDataStore
@@ -10,7 +10,7 @@ public class CoreDataDefaultStorage: Storage {
     internal var persistentStoreCoordinator: NSPersistentStoreCoordinator!
     internal var rootSavingContext: NSManagedObjectContext!
     
-    // MARK: - Storage conformance
+    // MARK: - Storage
     
     public var description: String {
         "CoreDataDefaultStorage(\(store.path.lastPathComponent))"
@@ -28,79 +28,6 @@ public class CoreDataDefaultStorage: Storage {
         return ctx
     }()
     
-    public func operation<T>(
-        _ operation: @escaping (_ context: any Context, _ save: @escaping () -> Void) throws -> T
-    ) throws -> T {
-        let context: NSManagedObjectContext = saveContext as! NSManagedObjectContext
-        var capturedError: (any Error)?
-        var returnedObject: T!
-        
-        context.performAndWait {
-            do {
-                returnedObject = try operation(context) {
-                    do {
-                        try context.save()
-                    } catch {
-                        capturedError = error
-                    }
-                    self.rootSavingContext.performAndWait {
-                        if self.rootSavingContext.hasChanges {
-                            do {
-                                try self.rootSavingContext.save()
-                            } catch {
-                                capturedError = error
-                            }
-                        }
-                    }
-                }
-            } catch {
-                capturedError = error
-            }
-        }
-        
-        if let error = capturedError { throw error }
-        return returnedObject
-    }
-    
-    public func backgroundOperation(
-        _ operation: @escaping (_ context: any Context, _ save: @escaping () -> Void) -> Void,
-        completion: @escaping ((any Error)?) -> Void
-    ) {
-        let context: NSManagedObjectContext = saveContext as! NSManagedObjectContext
-        var capturedError: (any Error)?
-        context.perform {
-            operation(context) {
-                do {
-                    try context.save()
-                } catch {
-                    capturedError = error
-                }
-                self.rootSavingContext.perform {
-                    if self.rootSavingContext.hasChanges {
-                        do {
-                            try self.rootSavingContext.save()
-                        } catch {
-                            capturedError = error
-                        }
-                    }
-                    completion(capturedError)
-                }
-            }
-        }
-    }
-    
-    public func removeStore() throws {
-        let url = store.path
-        let dir = url.deletingLastPathComponent()
-        let base = url.lastPathComponent
-        let shm = dir.appendingPathComponent(base + "-shm")
-        let wal = dir.appendingPathComponent(base + "-wal")
-        
-        try FileManager.default.removeItem(at: url)
-        _ = try? FileManager.default.removeItem(at: shm)
-        _ = try? FileManager.default.removeItem(at: wal)
-    }
-    
     // MARK: - Init
     
     public init(store: CoreDataStore, model: CoreDataObjectModel, migrate: Bool = true) throws {
@@ -117,6 +44,21 @@ public class CoreDataDefaultStorage: Storage {
                                         concurrencyType: .privateQueueConcurrencyType)
         mainContext = makeContext(withParent: .parentContext(rootSavingContext),
                                   concurrencyType: .mainQueueConcurrencyType)
+    }
+    
+    public static func build(
+        store: CoreDataStore,
+        model: CoreDataObjectModel,
+        migrate: Bool = true
+    ) async throws -> CoreDataDefaultStorage {
+        
+        // This runs your existing, blocking `init` safely on a background thread.
+        // The `.value` call awaits the result and re-throws any error.
+        let storage = try await Task.detached {
+            try CoreDataDefaultStorage(store: store, model: model, migrate: migrate)
+        }.value
+        
+        return storage
     }
 }
 
@@ -185,8 +127,8 @@ internal func addPersistentStore(
         }
         if let error = error {
             let isMigrationError =
-                error.code == NSPersistentStoreIncompatibleVersionHashError ||
-                error.code == NSMigrationMissingSourceModelError
+            error.code == NSPersistentStoreIncompatibleVersionHashError ||
+            error.code == NSMigrationMissingSourceModelError
             if isMigrationError && cleanAndRetryIfMigrationFails {
                 _ = try? cleanStoreFilesAfterFailedMigration(store: store)
                 return try add(store, storeCoordinator, options, false)
@@ -205,8 +147,9 @@ internal func cleanStoreFilesAfterFailedMigration(store: CoreDataStore) throws {
     let url = store.path
     let dir = url.deletingLastPathComponent()
     let base = url.lastPathComponent
-    let shm = dir.appendingPathComponent(base + "-shm")
-    let wal = dir.appendingPathComponent(base + "-wal")
+    
+    let shm = dir.appendingPathComponent(base).appendingPathExtension("shm")
+    let wal = dir.appendingPathComponent(base).appendingPathExtension("wal")
     
     try FileManager.default.removeItem(at: url)
     _ = try? FileManager.default.removeItem(at: shm)
