@@ -5,6 +5,9 @@ import Foundation
     case invalidModel(CoreDataObjectModel)
     
     case persistentStoreInitialization(underlying: (any Error)? = nil)
+    
+    case contextRequired
+        case invalidType
 }
 
 // MARK: - LocalizedError
@@ -19,27 +22,10 @@ extension CoreDataError: LocalizedError {
                 return "Failed to initialize the persistent store: \(e.localizedDescription)"
             }
             return "Failed to initialize the persistent store."
+        case .contextRequired:
+            return "The operation cannot be performed because the context is nil."
+        case .invalidType:
+            return "The entity type is invalid or could not be cast correctly."
         }
-    }
-}
-
-// MARK: - NSError bridging
-
-extension CoreDataError: CustomNSError {
-    public static var errorDomain: String { "com.aporat.SugarRecord.CoreDataError" }
-    
-    public var errorCode: Int {
-        switch self {
-        case .invalidModel:                  return 1
-        case .persistentStoreInitialization: return 2
-        }
-    }
-    
-    public var errorUserInfo: [String : Any] {
-        var info: [String: Any] = [NSLocalizedDescriptionKey: errorDescription ?? ""]
-        if case .persistentStoreInitialization(let underlying?) = self {
-            info[NSUnderlyingErrorKey] = underlying
-        }
-        return info
     }
 }
