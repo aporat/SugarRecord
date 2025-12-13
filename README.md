@@ -66,7 +66,7 @@ final class NotesStore {
 ## Core Concepts
 
 - **`Storage`**  
-  Abstract store (e.g. `CoreDataDefaultStorage`). Provides `mainContext` and `saveContext`.
+  Abstract store (e.g. `CoreDataDefaultStorage`).
 
 - **`Context`**  
   Unit of work. Conforms to `Requestable`.  

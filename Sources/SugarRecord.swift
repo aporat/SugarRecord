@@ -16,17 +16,6 @@ public class SugarRecord: @unchecked Sendable {
     /// Main/UI-facing context (Main Actor).
     public var mainContext: NSManagedObjectContext!
     
-    /// Background save context.
-    /// - Warning: Avoid using this directly. Use `performBackgroundTask` instead.
-    @available(*, deprecated, message: "Use performBackgroundTask for safe background operations.")
-    public lazy var saveContext: NSManagedObjectContext = {
-        let ctx = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        ctx.parent = rootSavingContext
-        ctx.observeContextOnSave(inMainThread: true) { [weak self] notification in
-            self?.mainContext.mergeChanges(fromContextDidSave: notification)
-        }
-        return ctx
-    }()
     
     // MARK: - Init
     
