@@ -14,5 +14,5 @@ file_length:
 identifier_name:
   min_length: 2
 included:
-  - SugarRecord
-  - SugarRecordTests
+  - Sources
+  - Tests
