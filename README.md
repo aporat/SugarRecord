@@ -1,6 +1,6 @@
 # SugarRecord
 
-A lightweight Swift persistence helper for iOS / macOS / watchOS / tvOS.  
+A lightweight Swift persistence helper for iOS / macOS.
 Focus: ergonomic APIs, testability, and modern Swift Concurrency.
 
 ---
@@ -27,36 +27,32 @@ pod 'SugarRecord'
 
 ## Quick Start
 
-Define a store using `Storage` (Core Data by default):
+Define a store using `SugarRecord` (Core Data wrapper):
 
 ```swift
 import SugarRecord
 
 @MainActor
 final class NotesStore {
-    private let db: Storage
+    private let db: SugarRecord
 
     init() throws {
         let model = CoreDataObjectModel.named("MyModel", .main)
         let store = CoreDataStore.named("Notes.sqlite")
-        self.db = try CoreDataDefaultStorage(store: store, model: model)
+        self.db = try SugarRecord(store: store, model: model)
     }
 
-    func createNote(title: String) async throws -> Note {
-        try await db.write { ctx in
-            let note: Note = try ctx.new()
-            note.title = title
-            note.createdAt = Date()
-            return note
-        }
+    func createNote(title: String) async throws {
+        let note: Note = try db.mainContext.new()
+        note.title = title
+        note.createdAt = Date()
+        try await db.mainContext.saveToPersistentStore()
     }
 
     func fetchNotes() async throws -> [Note] {
-        try await db.read { ctx in
-            let request = ctx.request(Note.self)
-                .sorted(with: "createdAt", ascending: false)
-            return try ctx.fetch(request)
-        }
+        let request = FetchRequest<Note>(db.mainContext)
+            .sorted(key: "createdAt", ascending: false)
+        return try await request.fetch()
     }
 }
 ```
@@ -65,38 +61,37 @@ final class NotesStore {
 
 ## Core Concepts
 
-- **`Storage`**  
-  Abstract store (e.g. `CoreDataDefaultStorage`).
+- **`SugarRecord`**
+  Main Core Data stack manager. Provides `mainContext` for UI operations and `performBackgroundTask` for background work.
 
-- **`Context`**  
-  Unit of work. Conforms to `Requestable`.  
-  Supports fetching, inserting, querying, counting, batch operations.
+- **`NSManagedObjectContext` Extensions**
+  Extended with convenient methods: `fetch`, `new`, `remove`, `saveToPersistentStore`, and batch operations.
 
-- **`FetchRequest<T>`**  
+- **`FetchRequest<T>`**
   Lightweight builder for queries. Supports filtering, sorting, pagination.
 
 ```swift
-let request = storage.request(Note.self)
-    .filtered(with: "title", equalTo: "Hello")
-    .sorted(with: "createdAt", ascending: false)
+let request = FetchRequest<Note>(db.mainContext)
+    .filtered(key: "title", equalTo: "Hello")
+    .sorted(key: "createdAt", ascending: false)
     .limit(20)
 
-let notes = try storage.fetch(request)
+let notes = try await request.fetch()
 ```
 
-- **Async Helpers**  
-  `storage.read { ... }` and `storage.write { ... }` provide ergonomic concurrency-safe operations.
+- **Async/Await Support**
+  All context operations support both sync and async variants for flexibility.
 
 ---
 
 ## Features
 
-- Async/await `read` / `write` helpers
+- Async/await support for all operations
 - Predictable thread confinement (Core Data contexts under the hood)
 - In-memory stores for testing
 - Small surface area, minimal boilerplate
 - Batch update & delete support
-- Extensible to other backends (not just Core Data)
+- Background task execution with automatic merge to main context
 
 ---
 
@@ -104,17 +99,13 @@ let notes = try storage.fetch(request)
 
 | Platform | Minimum |
 | -------- | ------- |
-| iOS      | 14      |
-| macOS    | 12      |
-| watchOS  | 8       |
-| tvOS     | 15      |
+| iOS      | 17      |
+| macOS    | 14      |
 
 ---
 
 ## Documentation
 
-- API reference (DocC) in `Documentation/`
-- Examples in `Examples/`
 - Unit tests in `Tests/` (in-memory stores, Core Data smoke tests)
 
 ---
