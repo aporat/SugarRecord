@@ -185,7 +185,7 @@ public extension NSManagedObjectContext {
         }
     }
     
-    public func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) async throws {
+    func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) async throws {
         try await perform {
             let request = NSBatchUpdateRequest(entityName: entityName)
             request.propertiesToUpdate = propertiesToUpdate
