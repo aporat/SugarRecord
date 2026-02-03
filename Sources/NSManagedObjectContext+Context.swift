@@ -91,7 +91,7 @@ public extension NSManagedObjectContext {
     // MARK: - Querying (Dictionaries / Values)
     
     /// Fetch a list of dictionaries for specific attributes.
-    public func query<T: NSManagedObject>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
+    func query<T: NSManagedObject>(_ request: FetchRequest<T>, attributes: [String]) throws -> [[String: Any]] {
         return try performAndWait {
             let fr = try makeNSFetchRequest(request)
             fr.resultType = .dictionaryResultType
@@ -103,7 +103,7 @@ public extension NSManagedObjectContext {
     }
     
     /// Fetch a single value (e.g. a specific ID) from the first matching object.
-    public func queryOne<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) throws -> String? {
+    func queryOne<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) throws -> String? {
         return try performAndWait {
             let fr = try makeNSFetchRequest(request)
             fr.resultType = .dictionaryResultType
@@ -118,7 +118,7 @@ public extension NSManagedObjectContext {
     }
     
     /// Fetch a unique set of values for a specific attribute (e.g. "GetAllUserIDs").
-    public func querySet<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String> {
+    func querySet<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) throws -> Set<String> {
         return try performAndWait {
             let fr = try makeNSFetchRequest(request)
             fr.resultType = .dictionaryResultType
@@ -134,7 +134,7 @@ public extension NSManagedObjectContext {
     
     // MARK: - Async Querying
     
-    public func querySet<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) async throws -> Set<String> {
+    func querySet<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) async throws -> Set<String> {
         try await perform {
             let fr = try self.makeNSFetchRequest(request)
             fr.resultType = .dictionaryResultType
@@ -152,7 +152,7 @@ public extension NSManagedObjectContext {
     
     /// Synchronously delete objects matching the predicate directly in the persistent store.
     /// - Note: This bypasses the context memory, so in-memory objects might become stale unless refreshed.
-    public func batchDelete(entityName: String, predicate: NSPredicate?) throws {
+    func batchDelete(entityName: String, predicate: NSPredicate?) throws {
         try performAndWait {
             let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             fetch.predicate = predicate
@@ -163,7 +163,7 @@ public extension NSManagedObjectContext {
     }
     
     /// Synchronously update properties on objects matching the predicate directly in the persistent store.
-    public func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) throws {
+    func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) throws {
         try performAndWait {
             let request = NSBatchUpdateRequest(entityName: entityName)
             request.propertiesToUpdate = propertiesToUpdate
@@ -175,7 +175,7 @@ public extension NSManagedObjectContext {
     
     // MARK: - Async Batch Actions
     
-    public func batchDelete(entityName: String, predicate: NSPredicate?) async throws {
+    func batchDelete(entityName: String, predicate: NSPredicate?) async throws {
         try await perform {
             let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             fetch.predicate = predicate
