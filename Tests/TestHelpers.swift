@@ -34,8 +34,12 @@ enum TestModelBuilder {
         return model
     }
 
-    /// Creates a `SugarRecord` instance backed by an in-memory store using the mock model.
+    /// Shared model singleton — avoids "Multiple NSEntityDescriptions claim MockUser" errors
+    /// that occur when each test class creates its own NSManagedObjectModel instance.
+    static let sharedModel: NSManagedObjectModel = makeMockModel()
+
+    /// Creates a `SugarRecord` instance backed by an in-memory store using the shared model.
     static func makeInMemoryStore() throws -> SugarRecord {
-        try SugarRecord(store: .inMemory, model: .model(makeMockModel()))
+        try SugarRecord(store: .inMemory, model: .model(sharedModel))
     }
 }
