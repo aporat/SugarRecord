@@ -236,7 +236,7 @@ final class TestContextExtensions: XCTestCase {
 
         let request = FetchRequest<MockUser>(verifyContext)
             .filtered(key: "name", equalTo: "Persistent")
-        let result = try verifyContext.fetchOne(request)
+        let result = try await verifyContext.fetchOne(request)
         XCTAssertNotNil(result)
         XCTAssertEqual(result?.age, 55)
     }

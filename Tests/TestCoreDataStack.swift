@@ -87,7 +87,7 @@ final class TestCoreDataStack: XCTestCase {
 
         // Verify data is accessible after persistent save
         let request = FetchRequest<MockUser>(db.mainContext).filtered(key: "name", equalTo: "PersistentUser")
-        let result = try db.mainContext.fetchOne(request)
+        let result = try await db.mainContext.fetchOne(request)
         XCTAssertNotNil(result)
         XCTAssertEqual(result?.age, 42)
     }
