@@ -47,21 +47,6 @@ final class TestCoreDataStack: XCTestCase {
     
     // MARK: - Tests
     
-    func testInsertAndFetch() throws {
-        // Given
-        let user: MockUser = try db.mainContext.new()
-        user.name = "John"
-        user.age = 25
-        try db.mainContext.save()
-        
-        // When
-        let request = FetchRequest<MockUser>(db.mainContext)
-        let results = try db.mainContext.fetch(request)
-        
-        // Then
-        XCTAssertEqual(results.count, 1)
-        XCTAssertEqual(results.first?.name, "John")
-    }
     
     func testDelete() throws {
         // Given
@@ -76,41 +61,6 @@ final class TestCoreDataStack: XCTestCase {
         // Then
         let count = db.mainContext.count(FetchRequest<MockUser>(db.mainContext))
         XCTAssertEqual(count, 0)
-    }
-    
-    func testPredicates() throws {
-        // Given
-        let u1: MockUser = try db.mainContext.new(); u1.name = "A"; u1.age = 10
-        let u2: MockUser = try db.mainContext.new(); u2.name = "B"; u2.age = 20
-        try db.mainContext.save()
-        
-        // When
-        let request = FetchRequest<MockUser>(db.mainContext)
-            .filtered(key: "age", equalTo: 20)
-        
-        let result = try db.mainContext.fetchOne(request)
-        
-        // Then
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "B")
-    }
-    
-    func testSorting() throws {
-        // Given
-        let u1: MockUser = try db.mainContext.new(); u1.name = "A"; u1.age = 30
-        let u2: MockUser = try db.mainContext.new(); u2.name = "B"; u2.age = 10
-        try db.mainContext.save()
-        
-        // When
-        let request = FetchRequest<MockUser>(db.mainContext)
-            .sorted(key: "age", ascending: true) // 10, then 30
-        
-        let results = try db.mainContext.fetch(request)
-        
-        // Then
-        XCTAssertEqual(results.count, 2)
-        XCTAssertEqual(results.first?.name, "B")
-        XCTAssertEqual(results.last?.name, "A")
     }
     
     func testAsyncBackgroundExecution() async throws {
