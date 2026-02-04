@@ -84,12 +84,12 @@ public struct FetchRequest<T: NSManagedObject>: @unchecked Sendable {
     
     public func query(attributes: [String]) async throws -> [[String: Any]] {
         guard let ctx = context else { throw CoreDataError.contextRequired }
-        return try ctx.query(self, attributes: attributes)
+        return try await ctx.query(self, attributes: attributes)
     }
     
     public func queryOne(attribute: String) async throws -> String? {
         guard let ctx = context else { throw CoreDataError.contextRequired }
-        return try ctx.queryOne(self, attribute: attribute)
+        return try await ctx.queryOne(self, attribute: attribute)
     }
     
     public func querySet(attribute: String) async throws -> Set<String> {

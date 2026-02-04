@@ -62,7 +62,7 @@ public extension NSManagedObjectContext {
     // MARK: - CRUD Helpers
     
     func new<T: NSManagedObject>() throws -> T {
-        guard let entityName = T.entity().name else { throw CoreDataError.invalidType }
+        let entityName = T.entityName
         
         return try performAndWait {
             guard let object = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self) as? T else {
@@ -133,6 +133,33 @@ public extension NSManagedObjectContext {
     }
     
     // MARK: - Async Querying
+    
+    /// Async: Fetch a list of dictionaries for specific attributes.
+    func query<T: NSManagedObject>(_ request: FetchRequest<T>, attributes: [String]) async throws -> [[String: Any]] {
+        try await perform {
+            let fr = try self.makeNSFetchRequest(request)
+            fr.resultType = .dictionaryResultType
+            fr.propertiesToFetch = attributes
+            
+            guard let results = try self.fetch(fr) as? [[String: Any]] else { return [] }
+            return results
+        }
+    }
+    
+    /// Async: Fetch a single value (e.g. a specific ID) from the first matching object.
+    func queryOne<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) async throws -> String? {
+        try await perform {
+            let fr = try self.makeNSFetchRequest(request)
+            fr.resultType = .dictionaryResultType
+            fr.propertiesToFetch = [attribute]
+            fr.fetchLimit = 1
+            
+            guard let results = try self.fetch(fr) as? [[String: Any]],
+                  let first = results.first else { return nil }
+            
+            return first[attribute] as? String
+        }
+    }
     
     func querySet<T: NSManagedObject>(_ request: FetchRequest<T>, attribute: String) async throws -> Set<String> {
         try await perform {
