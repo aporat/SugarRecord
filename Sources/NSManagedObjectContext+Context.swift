@@ -153,9 +153,11 @@ public extension NSManagedObjectContext {
     /// Synchronously delete objects matching the predicate directly in the persistent store.
     /// - Note: This bypasses the context memory, so in-memory objects might become stale unless refreshed.
     func batchDelete(entityName: String, predicate: NSPredicate?) throws {
+        nonisolated(unsafe) let unsafePredicate = predicate
+
         try performAndWait {
             let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-            fetch.predicate = predicate
+            fetch.predicate = unsafePredicate
             let request = NSBatchDeleteRequest(fetchRequest: fetch)
             request.resultType = .resultTypeCount
             _ = try self.execute(request)
@@ -164,10 +166,13 @@ public extension NSManagedObjectContext {
     
     /// Synchronously update properties on objects matching the predicate directly in the persistent store.
     func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) throws {
+        nonisolated(unsafe) let unsafePropertiesToUpdate = propertiesToUpdate
+        nonisolated(unsafe) let unsafePredicate = predicate
+
         try performAndWait {
             let request = NSBatchUpdateRequest(entityName: entityName)
-            request.propertiesToUpdate = propertiesToUpdate
-            request.predicate = predicate
+            request.propertiesToUpdate = unsafePropertiesToUpdate
+            request.predicate = unsafePredicate
             request.resultType = .updatedObjectsCountResultType
             _ = try self.execute(request)
         }
@@ -176,9 +181,10 @@ public extension NSManagedObjectContext {
     // MARK: - Async Batch Actions
     
     func batchDelete(entityName: String, predicate: NSPredicate?) async throws {
+        nonisolated(unsafe) let unsafePredicate = predicate
         try await perform {
             let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-            fetch.predicate = predicate
+            fetch.predicate = unsafePredicate
             let request = NSBatchDeleteRequest(fetchRequest: fetch)
             request.resultType = .resultTypeCount
             _ = try self.execute(request)
@@ -186,10 +192,12 @@ public extension NSManagedObjectContext {
     }
     
     func batchUpdate(entityName: String, propertiesToUpdate: [AnyHashable: Any]?, predicate: NSPredicate?) async throws {
+        nonisolated(unsafe) let unsafePropertiesToUpdate = propertiesToUpdate
+        nonisolated(unsafe) let unsafePredicate = predicate
         try await perform {
             let request = NSBatchUpdateRequest(entityName: entityName)
-            request.propertiesToUpdate = propertiesToUpdate
-            request.predicate = predicate
+            request.propertiesToUpdate = unsafePropertiesToUpdate
+            request.predicate = unsafePredicate
             request.resultType = .updatedObjectsCountResultType
             _ = try self.execute(request)
         }
