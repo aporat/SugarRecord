@@ -232,17 +232,12 @@ public extension NSManagedObjectContext {
     
     // MARK: - Saving
     
-    /// Asynchronously saves changes in the current context and recursively saves parent contexts.
-    /// This ensures data flows from Main Context -> Root Context -> SQLite Disk.
+    /// Asynchronously saves changes in the current context to the persistent store.
     func saveToPersistentStore() async throws {
         try await perform {
             if self.hasChanges {
                 try self.save()
             }
-        }
-        
-        if let parent = self.parent {
-            try await parent.saveToPersistentStore()
         }
     }
     
